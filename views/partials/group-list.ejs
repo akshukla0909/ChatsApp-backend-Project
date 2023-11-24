@@ -1,0 +1,64 @@
+<div class="wrapper-box">
+  <% myGroups.forEach((group) => { %>
+      <div class="each-user-box" onclick="displayGroup(event)" data-group-details = '<%= JSON.stringify(group) %>' group-data-id = '<%=group._id %>' >
+        <div class="img-box-left">
+
+          <div class="img-cont-chat">
+             <% if (group.profilePic !== '../images/grp') { %> 
+               <img src="/profile/<%= group.profilePic %>" alt="user-image"> 
+           <% } else { %>
+              <img src="../images/grp.png" alt="user-image">
+                 <% } %>       
+          </div>
+        </div>
+        <div class="img-box-name">
+          <div class="name-user">              
+            <div>
+            <span style="font-size: .9rem;"><%= group.name %></span>
+            </div>  
+            <div class="last-msg-name" id="last-msg-<%= group._id %>">
+            <span>~akash: nice dp!</span>
+            </div>
+          </div>
+        </div>
+        <div class="msg-count" id="msg-count-<%= group._id %>">
+          <span></span>
+        </div>
+      </div>
+  <% }); %>
+
+  <!-- joined groups for each -->
+  <% joinedGroups.forEach((joinGroup) => { %>
+            <%   if(joinGroup.group_id) { %>
+    <div class="each-user-box" onclick="displayGroup(event)" data-group-details = '<%= JSON.stringify(joinGroup) %>' group-data-id = '<%= joinGroup.group_id._id %>' >
+      <div class="img-box-left">
+
+         <div class="img-cont-chat">
+          <% if (joinGroup.group_id.profilePic !== '../images/grp') { %>
+            <img src="/profile/<%= joinGroup.profilePic %>" alt="user-image">
+        <% } else { %>
+            <img src="../images/grp.png" alt="user-image">
+               <% } %>       
+        </div>
+      </div>
+      <div class="img-box-name">
+        <div class="name-user">              
+          <div>
+          <span style="font-size: .9rem;"><%= joinGroup.group_id.name %></span>
+          </div>  
+          <div class="last-msg-name" id="last-msg-<%= joinGroup.group_id._id %>">
+            <span>~akash: nice </span>
+            </div>
+                    <!-- <div class="offline-status" id="<%= joinGroup._id%>-status">offline</div> -->
+        </div>
+      </div>
+      <div class="msg-count" id="msg-count-<%= joinGroup.group_id._id %>">
+        <span></span>
+      </div>
+    </div>
+    <% }; %>
+<% }); %>
+
+</div>
+
+

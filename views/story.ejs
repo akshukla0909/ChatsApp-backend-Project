@@ -1,0 +1,479 @@
+<%- include('partials/header') %>
+
+<style>
+  /* Custom width and height classes for the modal */
+.modal-lg {
+    padding: 130px 0px;
+    height: 100vh;
+    width: 110vmin;
+    position: relative;
+}
+.modal-content {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(109.6deg, rgba(0, 0, 0, 0.63) 11.2%, rgb(63, 61, 61) 68.9%);
+  /* background: linear-gradient(to bottom, rgba(0, 0, 0, 0.252), rgba(0, 0, 0, 0.5)); */
+  backdrop-filter: blur(5px); 
+  border: none;
+  overflow: hidden;
+  scale: 1.95;
+}
+.modal-content .modal-body{
+  width: 100%;
+  height: 100%;
+  position: relative;
+  
+}
+.modal-content .modal-body::-webkit-scrollbar{
+  display: none;
+}
+.modal::-webkit-scrollbar{
+  display: none;
+}
+.modal-backdrop {
+  z-index: 40;
+  opacity: 0.4; 
+}
+.img-cont-rend{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 60%;
+  height: 100%;
+  overflow: hidden;
+}
+.modal-content .modal-body .img-cont-rend img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Hide video timeline */
+#storyVideo::-webkit-media-controls-timeline {
+    display: none !important;
+}
+
+/* Hide controls menu */
+#storyVideo::-webkit-media-controls {
+    display: none !important;
+}
+
+
+#closeBt{
+  position: absolute;
+  right: 20px;
+  top: 5px;
+  cursor: pointer;
+  z-index: 12222;
+  color: #fff;
+  font-size: 14px;
+}
+#likeBt{
+  position: absolute;
+  left: 20px;
+  top: 5px;
+  cursor: pointer;
+  z-index: 12222;
+  color: #fff;
+  font-size: 14px;
+}
+.story-like{
+  position: absolute;
+  left: 20px;
+  bottom: 4px;
+  cursor: pointer;
+  z-index: 12222;
+  color: #fff;
+  font-size: 14px;
+}
+
+/* loader css */
+.loader-container {
+  border-radius: 4px;
+  position: fixed;
+  top: 12px;
+  left: 15%;
+  width: 70%;
+  height: 2px;
+  background-color: rgba(0, 0, 0, 0.451);
+  z-index: 999999;
+}
+
+
+.loader{
+   /* content: "1"; */
+   position: absolute;
+   bottom: 10%;
+   height: 100%;
+   border-radius: 4px;
+   animation: loaderAnimation 6s linear;
+}
+
+@keyframes loaderAnimation {
+  0% {
+    width: 0;
+    background-color: #fefeff;
+
+  }
+  25% {
+    width: 25%;
+    background-color: #fefeff;
+    
+  }
+  50% {
+    width: 50%;
+    background-color: #fefeff;
+  }
+  75% {
+    width: 75%;
+    background-color: #fefeff;
+  }
+  100% {
+    width: 100% ;
+    background-color: #fefeff;
+
+  }
+}
+
+
+</style>
+
+    <div id="main" >
+        <div class="landing-wrapper" style="background-color: #D8DADA; overflow :hidden">
+        <div class="landing-wrapper-before" style="height: 110px;"></div>
+        <div class="landing-page">
+              <div class="main-page">
+                 <div class="left user-window">
+
+                   <%- include('partials/profile-menu') %>
+
+                    <div class="header">
+                    <div class="img-box">
+                       <div class="img-cont-head">
+                        <a href="#" id="prof-icon">
+                        <% if (logInUser.profilePic !== '../images/def') { %>
+                            <img src="/profile/<%= logInUser.profilePic %>" alt="user-image">
+                        <% } else { %>
+                            <img src="../images/def.png" alt="user-image">
+                               <% } %>
+                                  
+                        </a>
+                       </div>
+                    </div>
+                    <div class="icon-box" style="gap: 1.2rem;">
+                    <!-- click below group list will render -->
+                      <a href="/group-chat" style="color: inherit; text-decoration: none;">
+                        <i class="fa-solid fa-user-group"></i>
+                      </a>
+                      
+                      <!-- <a href="#" id="add-story-icon1">
+                        <i class="ri-donut-chart-line" style="font-weight: 600;"> <sup style="font-size: 15px; margin-left: -5px; font-weight: 600;">+</sup> </i>
+                      </a> -->
+                        <a href="/profile">
+                        <i class="ri-chat-new-line"></i>
+                       </a> 
+                        <div class="dropdown">
+                            <button onclick="myFunction()" class="dropbtn">
+                              <i class="fa-solid fa-ellipsis-vertical" class="dropbtn"></i>
+                            </button>
+                            <div id="myDropdown" class="dropdown-content">
+                              <a href="/profile">Profile</a>
+                              <a href="#">My account</a>
+                              <a href="#" id="group-menu1">Create group</a>
+                              <a href="/profile">Select chats</a>
+                              <a href="/">logout</a>
+                            </div>
+                          </div>
+                    </div>
+                    </div>
+                    <div class="search-field">
+                          
+                       <div class="search-box">
+                        <i class="ri-search-line"></i>
+                        <input type="text" placeholder="Search a story" id="searchUser">
+                       </div>
+
+                    </div>
+                    <div class="conversation">
+                        <div class="wrapper-box">
+                          <% if (myStory && myStory.length > 0) { %>
+                                <div class="each-user-box" onclick="openStoryModal('<%= myStory[0].filePath %>', '<%= myStory[0].mimetype %>')">
+                                  <div class="img-box-left">
+ 
+                                    <div class="img-cont-chat">
+                                        <% if (logInUser.profilePic !== '../images/def') { %>
+                                            <img src="/profile/<%= logInUser.profilePic %>" alt="user-image">
+                                        <% } else { %>
+                                            <img src="../images/def.png" alt="user-image">
+                                               <% } %>
+                                                  
+                                    </div>
+                                  </div>
+                                  <div class="img-box-name">
+                                    <div class="name-user">              
+                                      <div>
+                                        <span>My Status</span>
+                                      </div> 
+                                      <div style="margin-top: -3px">
+                                        <span style="font-size: 12px; text-transform: none; color: #667781;">Tap to see status updates</span>
+                                      </div> 
+                                    </div>
+                                  </div>
+                                </div>
+                                <% } else { %>
+                                  <div class="each-user-box" id="add-story-icon">
+
+                                    <form action="#" id="story-form" method="post" enctype="multipart/form-data">
+                                      <input type="file"  style="display: none;" id="inp-story" name="file">
+                                    </form>
+
+                                    <div class="img-box-left">
+                                     <div id="add-story">
+                                      <sup>
+                                        <i class="ri-add-circle-fill"></i>
+                                      </sup>
+                                   </div>  
+                                      <div class="img-cont-chat">
+                                          <% if (logInUser.profilePic !== '../images/def') { %>
+                                              <img src="/profile/<%= logInUser.profilePic %>" alt="user-image">
+                                          <% } else { %>
+                                              <img src="../images/def.png" alt="user-image">
+                                                 <% } %>
+                                                    
+                                      </div>
+                                    </div>
+                                    <div class="img-box-name">
+                                      <div class="name-user">              
+                                        <div>
+                                          <span>My Status</span>
+                                        </div> 
+                                        <div style="margin-top: -3px">
+                                          <span style="font-size: 12px; text-transform: none; color: #667781;">Tap to add a status</span>
+                                        </div> 
+                                      </div>
+                                    </div>
+                                  </div>
+                                <% } %>
+                                                      
+<!-- Modal with custom width and height -->
+
+<div class="modal fade" id="storyModal" tabindex="-1" aria-labelledby="storyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+   
+      <div class="modal-content">
+        <i class="ri-heart-3-fill" id="likeBt"></i>
+          <i class="ri-close-line" id="closeBt" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></i>
+          <div class="modal-body">
+            <div class="loader-container">
+              <div class="loader"></div>
+            </div>
+                 <div class="img-cont-rend">
+                     <img id="storyContent" src="" alt="Story" style="display: block;">
+                    <video id="storyVideo" src=""  controls preload="auto" style="display: none;" autoplay onended="restartVideo()">
+                        <!-- <source src="" type="video/mp4"> -->
+                        Your browser does not support the video tag.
+                    </video>
+                 </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- ends -->
+                              <div style="margin: 5px 10px 5px 20px; font-size: 14.2px;">
+                                <span >Recent Updates</span>
+                              </div>
+                              <!-- here others status  -->
+
+                              <% allStory.reverse().forEach(function(story) { %>
+                                <div class="each-user-box" onclick="openStoryModal('<%= story.filePath %>', '<%= story.mimetype %>')">
+                                  <div class="img-box-left">
+                                    <div class="img-cont-chat">
+                                      <% if (story.user_id.profilePic !== '../images/def') { %> 
+                                        <img src="/profile/<%= story.user_id.profilePic %>" alt="user-image"> 
+                                    <% } else { %>
+                                       <img src="../images/def.png" alt="user-image">
+                                          <% } %>
+                                    </div>
+                                  </div>
+                                  <div class="img-box-name">
+                                    <div class="name-user">              
+                                      <div>
+                                        <!-- Display the user's name -->
+                                        <span><%= story.user_id.username %></span>
+                                      </div>  
+                                      <div style=" margin-top: -4px;">
+                                        <% const timestamp = new Date(story.createdAt); %>
+                                        <% const now = new Date(); %>
+                                        <% const displayHours = timestamp.getHours() % 12 || 12; %>
+                                        <% const displayMinutes = (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes(); %>
+                                        <% const ampm = timestamp.getHours() >= 12 ? 'pm' : 'am'; %>
+                                        <% const formattedTime = displayHours + ':' + displayMinutes + ' ' + ampm; %>
+                                      
+                                        <% const cutOffTime = new Date(now); %>
+                                        <% cutOffTime.setHours(0, 0, 0, 0); // Set cut-off time to 12:00 AM %>
+                                      
+                                        <% if (timestamp < cutOffTime) { %>
+                                          <!-- Story posted before 12:00 AM -->
+                                          <span style="font-size: 12px; text-transform: none; color: #667781;">yesterday at <%= formattedTime %></span>
+                                        <% } else { %>
+                                          <!-- Story posted after 12:00 AM -->
+                                          <span style="font-size: 12px; text-transform: none; color: #667781;">today at <%= formattedTime %></span>
+                                        <% } %>
+                                      </div>  
+                                    </div>
+                                  </div>
+                                </div>
+                              <% }); %>
+                              
+                    </div>
+                    <!-- left story list -->
+
+                 </div>
+              </div>
+                 <div class="right empty-chat">
+                    <div class="no-chat">
+                      <div class="box-img">
+                        <img src="../images/empty-chat.webp" alt="">
+                    </div>
+                    <div class="box-text">
+                        <h1 class="_1gO_N">Download WhatsApp for Windows</h1>
+                        <div class="_1SWLN">Make calls, share your screen and get a faster experience when you download the Windows app.</div>
+                        <div class="ubfBJ"><span data-icon="lock-small" class=""><svg viewBox="0 0 10 12" height="12" width="10" preserveAspectRatio="xMidYMid meet" class="" version="1.1"><path d="M5.00847986,1.6 C6.38255462,1.6 7.50937014,2.67435859 7.5940156,4.02703389 L7.59911976,4.1906399 L7.599,5.462 L7.75719976,5.46214385 C8.34167974,5.46214385 8.81591972,5.94158383 8.81591972,6.53126381 L8.81591972,9.8834238 C8.81591972,10.4731038 8.34167974,10.9525438 7.75719976,10.9525438 L2.25767996,10.9525438 C1.67527998,10.9525438 1.2,10.4731038 1.2,9.8834238 L1.2,6.53126381 C1.2,5.94158383 1.67423998,5.46214385 2.25767996,5.46214385 L2.416,5.462 L2.41679995,4.1906399 C2.41679995,2.81636129 3.49135449,1.68973395 4.84478101,1.60510326 L5.00847986,1.6 Z M5.00847986,2.84799995 C4.31163824,2.84799995 3.73624912,3.38200845 3.6709675,4.06160439 L3.6647999,4.1906399 L3.663,5.462 L6.35,5.462 L6.35111981,4.1906399 C6.35111981,3.53817142 5.88169076,2.99180999 5.26310845,2.87228506 L5.13749818,2.85416626 L5.00847986,2.84799995 Z" fill="currentColor"></path></svg></span> Your personal messages are end-to-end encrypted</div>
+                    </div>
+                    </div>
+                    
+                 </div>
+        </div>
+    </div>
+      </div>
+
+      
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+
+<script src="../javascripts/prof-menu.js"></script>
+<script src="../javascripts/script.js"></script>
+
+
+<script>
+
+ const loaderContainer = document.querySelector('.loader-container');
+
+ function openStoryModal(storyID, type) {
+    const videoElement = document.getElementById('storyVideo');
+    const storyContent = document.getElementById('storyContent');
+
+    const storyContentUrl = `/story/${storyID}`;
+    loaderContainer.style.display = 'block';
+
+    if (type === 'image/avif') {
+        storyContent.style.display = 'block';
+        storyContent.src = storyContentUrl;
+        videoElement.style.display = 'none';
+
+        setTimeout(function() {
+            $('#storyModal').modal('hide');
+        }, 6000); 
+
+    } else if (type === 'video/mp4') {
+
+        videoElement.style.display = 'block';
+        videoElement.src = storyContentUrl;
+        videoElement.type = 'video/mp4';
+        storyContent.style.display = 'none';
+
+        videoElement.controlsList.add('nodownload');
+        videoElement.controlsList.add('nofullscreen');
+        var vidDuration;
+
+        videoElement.onloadedmetadata = function() {
+            // console.log(videoElement.duration);
+             vidDuration = videoElement.duration
+            const maxDuration = 25; 
+
+            if (videoElement.duration > maxDuration) {
+              console.log('yes more than 25s');
+                vidDuration = maxDuration;
+              //  console.log(vidDuration);
+            }
+
+            setTimeout(function() {
+                videoElement.pause();
+                // $('#storyModal').modal('hide');
+                window.location.reload()
+                // console.log(vidDuration +' sec over, hide video');
+            }, vidDuration * 1000); 
+
+          changeAnimationTiming(vidDuration)
+
+        };    
+    }
+
+    // Show the story modal
+    const storyModal = new bootstrap.Modal(document.getElementById('storyModal'));
+    storyModal.show();
+}
+
+
+// Function to change the animation timing for the loader container
+function changeAnimationTiming(timing) {
+
+  const loader = document.querySelector('.loader');
+  loader.style.animationDuration = `${timing}s`
+ 
+}
+
+function restartVideo() {
+    const video = document.getElementById('storyVideo');
+    video.currentTime = 0;
+    video.play();
+}
+
+// story delete or like funactionality 
+document.querySelector('#likeBt').addEventListener('click', function(){
+  console.log('hi hell');
+})
+
+
+
+
+</script>
+
+<script>
+   var senderId = `<%= logInUser._id %>`
+  //story share functionality 
+
+   document.querySelector("#add-story-icon").addEventListener('click',function(e){
+  console.log('helo from story icon');
+  document.querySelector('#inp-story').click();
+})
+
+document.querySelector("#inp-story").addEventListener('change', function(e){
+  e.preventDefault()
+
+  const selectedFile = event.target.files[0];
+  const formData = new FormData();
+
+  formData.append('file', selectedFile)
+  formData.append('userId', senderId);
+
+  axios.post('/story-upload', formData)
+  .then((resp)=>{
+
+    console.log(resp.data.newStory);
+    window.location.reload();
+  })
+  .catch((err)=>{
+    console.log(err.message);
+  })
+
+} )
+
+</script>
+</body>
+</html>

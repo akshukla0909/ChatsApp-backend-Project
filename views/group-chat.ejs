@@ -1,0 +1,488 @@
+<%- include('partials/header') %>
+
+<style>
+  .offcanvas-start{
+    width: 390px!important;
+    min-width: 380px!important;
+  }
+  @media (max-width: 1100px) {
+    .offcanvas-start {
+      margin: 0!important;
+    }
+  }
+  /* .offcanvas-start {
+ pointer-events:none!important 
+} */
+</style>
+
+    <div id="main" >
+        <div class="landing-wrapper" style="background-color: #D8DADA; overflow :hidden">
+        <div class="landing-wrapper-before" style="height: 110px;"></div>
+        <div class="landing-page">
+              <div class="main-page">
+                 <div class="left user-window">
+
+                   <%- include('partials/profile-menu') %>
+
+                    <div class="header">
+                    <div class="img-box">
+                       <div class="img-cont-head">
+                        <a href="#" id="prof-icon">
+                        <% if (logInUser.profilePic !== '../images/def') { %>
+                            <img src="/profile/<%= logInUser.profilePic %>" alt="user-image">
+                        <% } else { %>
+                            <img src="../images/def.png" alt="user-image">
+                               <% } %>
+                                  
+                        </a>
+                       </div>
+                    </div>
+                    <div class="icon-box">
+                      <a href="/groups" style="color: inherit; text-decoration: none;" >
+                        <i class="fa-solid fa-user-group"><sup style="font-size: 15px; margin-left: -3px;">+</sup></i>
+                      </a>
+                       <a href="/profile">
+                        <i class="ri-chat-new-line"></i>
+                       </a>
+                        <div class="dropdown">
+                            <button onclick="myFunction()" class="dropbtn">
+                              <i class="fa-solid fa-ellipsis-vertical" class="dropbtn"></i>
+                            </button>
+                            <div id="myDropdown" class="dropdown-content">
+                              <a href="/profile">Profile</a>
+                              <a href="#">My account</a>
+                              <a href="/groups" id="group-menu1">Create group</a>
+                              <a href="/profile">Select chats</a>
+                              <a href="/">logout</a>
+                            </div>
+                          </div>
+                    </div>
+                    </div>
+                    <div class="search-field">
+                          
+                       <div class="search-box">
+                        <i class="ri-search-line"></i>
+                        <input type="text" placeholder="Search or start new group chat" id="searchUser">
+                       </div>
+
+                    </div>
+                    <div class="conversation">
+                    <!-- left group list -->
+                    <%- include('partials/group-list') %>
+                    </div>
+                 </div>
+                 <div class="right empty-chat">
+                    <div class="no-chat">
+                      <div class="box-img">
+                        <img src="../images/empty-chat.webp" alt="">
+                    </div>
+                    <div class="box-text">
+                        <h1 class="_1gO_N">Download WhatsApp for Windows</h1>
+                        <div class="_1SWLN">Make calls, share your screen and get a faster experience when you download the Windows app.</div>
+                        <div class="ubfBJ"><span data-icon="lock-small" class=""><svg viewBox="0 0 10 12" height="12" width="10" preserveAspectRatio="xMidYMid meet" class="" version="1.1"><path d="M5.00847986,1.6 C6.38255462,1.6 7.50937014,2.67435859 7.5940156,4.02703389 L7.59911976,4.1906399 L7.599,5.462 L7.75719976,5.46214385 C8.34167974,5.46214385 8.81591972,5.94158383 8.81591972,6.53126381 L8.81591972,9.8834238 C8.81591972,10.4731038 8.34167974,10.9525438 7.75719976,10.9525438 L2.25767996,10.9525438 C1.67527998,10.9525438 1.2,10.4731038 1.2,9.8834238 L1.2,6.53126381 C1.2,5.94158383 1.67423998,5.46214385 2.25767996,5.46214385 L2.416,5.462 L2.41679995,4.1906399 C2.41679995,2.81636129 3.49135449,1.68973395 4.84478101,1.60510326 L5.00847986,1.6 Z M5.00847986,2.84799995 C4.31163824,2.84799995 3.73624912,3.38200845 3.6709675,4.06160439 L3.6647999,4.1906399 L3.663,5.462 L6.35,5.462 L6.35111981,4.1906399 C6.35111981,3.53817142 5.88169076,2.99180999 5.26310845,2.87228506 L5.13749818,2.85416626 L5.00847986,2.84799995 Z" fill="currentColor"></path></svg></span> Your personal messages are end-to-end encrypted</div>
+                    </div>
+                    </div>
+                    <div class="chat-yes">
+                         <header class="chat-header">
+                          <!-- group ki details -->
+
+                             <div class="box">
+                              <div class="img-box-left" style="cursor: pointer;">
+
+                                <%- include('partials/group-info') %>
+                                <div class="img-cont-chat" style="width: 38px; height: 38px" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+                                    <img src="../images/grp.png" alt="img" id="chat-yes-img">
+                                </div>
+                                </div>
+
+                                <div class="username-role" >
+                                  <div  class="role1"><span id="chat-yes-name">name</span></div>
+                                  <div class="online-status">
+                                    <!-- <span>online</span> -->
+                                  </div>
+                                </div>
+                                <div class="search-call-more">
+                                  <div class="vid-call" style="margin-right: 6px; color: rgb(84, 101,111,.5);">
+                                    <span><svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" fill="none"><path d="M3.27096 7.31042C3 7.82381 3 8.49587 3 9.84V14.16C3 15.5041 3 16.1762 3.27096 16.6896C3.5093 17.1412 3.88961 17.5083 4.35738 17.7384C4.88916 18 5.58531 18 6.9776 18H13.1097C14.502 18 15.1982 18 15.7299 17.7384C16.1977 17.5083 16.578 17.1412 16.8164 16.6896C17.0873 16.1762 17.0873 15.5041 17.0873 14.16V9.84C17.0873 8.49587 17.0873 7.82381 16.8164 7.31042C16.578 6.85883 16.1977 6.49168 15.7299 6.26158C15.1982 6 14.502 6 13.1097 6H6.9776C5.58531 6 4.88916 6 4.35738 6.26158C3.88961 6.49168 3.5093 6.85883 3.27096 7.31042Z" fill="currentColor"></path><path d="M18.7308 9.60844C18.5601 9.75994 18.4629 9.97355 18.4629 10.1974V13.8026C18.4629 14.0264 18.5601 14.2401 18.7308 14.3916L20.9567 16.3669C21.4879 16.8384 22.3462 16.4746 22.3462 15.778V8.22203C22.3462 7.52542 21.4879 7.16163 20.9567 7.63306L18.7308 9.60844Z" fill="currentColor"></path></svg>
+                                      <svg viewBox="0 0 17 13" height="10" preserveAspectRatio="xMidYMid meet" class="" version="1.1" x="0px" y="0px" enable-background="new 0 0 17 13"><path fill="currentColor" d="M3.202,2.5l5.2,5.2l5.2-5.2l1.5,1.5l-6.7,6.5l-6.6-6.6L3.202,2.5z"></path></svg>
+                                    </span>
+                                  </div>
+                                  <div class="search">
+                                    <span style="padding: 0 2px;">
+                                      <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" version="1.1" x="0px" y="0px" enable-background="new 0 0 24 24"><path fill="currentColor" d="M15.9,14.3H15L14.7,14c1-1.1,1.6-2.7,1.6-4.3c0-3.7-3-6.7-6.7-6.7S3,6,3,9.7 s3,6.7,6.7,6.7c1.6,0,3.2-0.6,4.3-1.6l0.3,0.3v0.8l5.1,5.1l1.5-1.5L15.9,14.3z M9.7,14.3c-2.6,0-4.6-2.1-4.6-4.6s2.1-4.6,4.6-4.6 s4.6,2.1,4.6,4.6S12.3,14.3,9.7,14.3z"></path></svg>
+                                    </span>
+                                  </div>
+                                  <div class="menu">
+                                    <span style="padding: 0 8px 0 0;">
+                                      <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" version="1.1" x="0px" y="0px" enable-background="new 0 0 24 24"><path fill="currentColor" d="M12,7c1.104,0,2-0.896,2-2c0-1.105-0.895-2-2-2c-1.104,0-2,0.894-2,2 C10,6.105,10.895,7,12,7z M12,9c-1.104,0-2,0.894-2,2c0,1.104,0.895,2,2,2c1.104,0,2-0.896,2-2C13.999,9.895,13.104,9,12,9z M12,15 c-1.104,0-2,0.894-2,2c0,1.104,0.895,2,2,2c1.104,0,2-0.896,2-2C13.999,15.894,13.104,15,12,15z"></path></svg>
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                              <!-- </div> -->
+                             </div>
+                            </header>
+                         <div class="messages">
+                          <div class="chat-window" id="chat-window">
+                             <div class="message-div" id="group-chat-container">
+                                      <!-- <div class="log-chat"><h5>hello</h5></div>
+                                      <div class="inverse-chat"><h5>hi</h5></div> -->
+                             </div>
+                          </div>
+                          <footer>
+                            <div class="send-message">
+
+                                   <span class="footer-send-m">
+                                         <div class="emoji-send-file">
+                                          <span>
+                                            <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="ekdr8vow dhq51u3o" version="1.1" x="0px" y="0px" enable-background="new 0 0 24 24"><path fill="currentColor" d="M9.153,11.603c0.795,0,1.439-0.879,1.439-1.962S9.948,7.679,9.153,7.679 S7.714,8.558,7.714,9.641S8.358,11.603,9.153,11.603z M5.949,12.965c-0.026-0.307-0.131,5.218,6.063,5.551 c6.066-0.25,6.066-5.551,6.066-5.551C12,14.381,5.949,12.965,5.949,12.965z M17.312,14.073c0,0-0.669,1.959-5.051,1.959 c-3.505,0-5.388-1.164-5.607-1.959C6.654,14.073,12.566,15.128,17.312,14.073z M11.804,1.011c-6.195,0-10.826,5.022-10.826,11.217 s4.826,10.761,11.021,10.761S23.02,18.423,23.02,12.228C23.021,6.033,17.999,1.011,11.804,1.011z M12,21.354 c-5.273,0-9.381-3.886-9.381-9.159s3.942-9.548,9.215-9.548s9.548,4.275,9.548,9.548C21.381,17.467,17.273,21.354,12,21.354z  M15.108,11.603c0.795,0,1.439-0.879,1.439-1.962s-0.644-1.962-1.439-1.962s-1.439,0.879-1.439,1.962S14.313,11.603,15.108,11.603z"></path></svg>
+                                          </span>
+                                          <span>
+                                            <input type="file"  style="display: none;">
+                                            <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M20.5 13.2501L20.5 10.7501L13.25 10.7501L13.25 3.5L10.75 3.5L10.75 10.7501L3.5 10.7501L3.5 13.2501L10.75 13.2501L10.75 20.5L13.25 20.5L13.25 13.2501L20.5 13.2501Z" fill="currentColor"></path></svg>
+
+                                          </span>
+                                         </div>
+                                         <div class="input-send-m">
+                                          <form action="" id="group-chat-form">
+                                          <input type="text" placeholder="Type a message" id="message">
+                                          </form>
+                                          <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" version="1.1" x="0px" y="0px" enable-background="new 0 0 24 24"><path fill="currentColor" d="M11.999,14.942c2.001,0,3.531-1.53,3.531-3.531V4.35c0-2.001-1.53-3.531-3.531-3.531 S8.469,2.35,8.469,4.35v7.061C8.469,13.412,9.999,14.942,11.999,14.942z M18.237,11.412c0,3.531-2.942,6.002-6.237,6.002 s-6.237-2.471-6.237-6.002H3.761c0,4.001,3.178,7.297,7.061,7.885v3.884h2.354v-3.884c3.884-0.588,7.061-3.884,7.061-7.885 L18.237,11.412z"></path></svg>
+                                         </div>
+                                      </span>
+                                       
+                            </div>
+                          </footer>
+                         </div>
+                        
+                    </div>
+                    
+                 </div>
+              </div>
+        </div>
+    </div>
+      </div>
+
+      
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+
+<script src="../javascripts/prof-menu.js"></script>
+<script src="../javascripts/script.js"></script>
+
+ <script>
+    document.querySelector('.img-container').addEventListener('click', function(e){
+      console.log('hello imgii');
+    })
+</script>
+
+<script>
+ 
+
+groupNameElement = document.getElementById("chat-yes-name")
+
+
+function displayGroup(event){
+  const groupBox = event.currentTarget;
+  const groupDetails = groupBox.getAttribute('data-group-details')
+  const group = JSON.parse(groupDetails);
+  // console.log(group)
+
+  const isMyGroup = group.creator_id === '<%= logInUser._id %>'
+
+
+  if (isMyGroup) {
+    groupNameElement.textContent =  group.name;  
+  } else {
+    groupNameElement.textContent = group.group_id.name; //others group
+  }
+
+  // chatYesImg.src = user.profilePic !== '../images/def' ? 
+  // `/profile/${user.profilePic}` : '../images/def.png';
+}
+
+chatYes = document.getElementsByClassName("chat-yes")
+chatYesImg = document.getElementById("chat-yes-img")
+
+
+function scrollToBottomG() {
+    var chatContainer = document.getElementById("chat-window");
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+
+var messageSendInp = document.querySelector("#message");
+var global_group_id;
+var senderId = `<%= logInUser._id %>`
+
+
+// setting a custom namesapce
+var socket = io('/user-namespace', {
+      auth: {
+        token : senderId
+     }
+    });
+
+
+    let allGroupIds = [];   // store all group_id
+    // var messageSeen = false;
+
+    window.onload = function(){
+      allGroupId()
+    
+}
+
+
+    
+function unreadMSgCount(group_id){
+  // group_id = global_group_id;
+
+  axios.get(`/msg-count-last-msg/${group_id}`)
+      .then((resp) => {
+
+        // if(resp.data.lastMessage.sender_id._id !== senderId){
+          
+        // console.log('Unread messages count:', resp.data.unreadCount);
+        // console.log('last message :', resp.data);
+        // console.log('sender name/id :', resp.data.lastMessage.sender_id.username);
+
+        const senderName = resp.data.lastMessage.sender_id.username
+        const unreadCount = resp.data.unreadCount
+        const lastMsg = resp.data.lastMessage.message
+        // Perform actions with the unread messages count (update UI)
+
+        const msgCountElem = document.getElementById(`msg-count-${group_id}`)
+        const lastMsgElem = document.getElementById(`last-msg-${group_id}`)
+
+        if (msgCountElem && lastMsgElem) {
+        if (unreadCount > 0) 
+        {
+          msgCountElem.style.opacity = '1';
+          lastMsgElem.style.opacity = '1';
+          msgCountElem.innerHTML = `<span>${unreadCount}</span>`;
+          lastMsgElem.innerHTML = `<span>~${senderName}: ${lastMsg}</span>`;
+        } else {
+          // only hide msg count
+          msgCountElem.style.opacity = '0';
+          lastMsgElem.style.opacity = '1';
+          lastMsgElem.innerHTML = `<span>~${senderName}: ${lastMsg}</span>`;
+        }
+      }
+
+        // }
+
+      })
+      .catch((err) => {
+        console.log('Error fetching unread messages count:', err.message);
+      });
+}
+
+    function allGroupId(){
+      axios.get('/all-group-id')
+      .then((resp)=>{
+        // console.log(resp.data);
+
+        allGroupIds = resp.data
+
+        allGroupIds.forEach((group_id)=>{
+           unreadMSgCount(group_id)
+        })
+
+      })
+      .catch((err)=>{
+        console.log('unable to fetch all group id' + err.message);
+      })
+    }
+
+
+// update last read timestamp start here
+
+function updateLastRead(group_id){
+
+axios.post(`/updateLastRead/${group_id}`)
+.then((resp)=>{
+    // console.log(resp);
+
+    // message seen successfull
+    messageSeen = true;
+    // getUpdatedMsg(group_id)
+    unreadMSgCount(group_id)
+})
+.catch((err)=>{
+  console.log(err.message + 'err updating last read msg');
+})
+}
+
+
+$('.each-user-box').click(function(){
+    global_group_id = $(this).attr('group-data-id');
+    const clickGroup_id = $(this).attr('group-data-id');
+
+    $('#group-chat-container').html('');
+
+    // console.log(global_group_id);
+    // console.log(clickGroup_id);
+
+    loadGroupChats();
+
+    updateLastRead(clickGroup_id)
+})
+  
+   // Input event for the message input field
+   document.querySelector("#message").addEventListener('input', function(e){
+    userMessage = e.target.value;
+  });
+  
+  // Keypress event for the chat form satart here
+  $('#group-chat-form').keypress(function(e){
+    if (e.key === 'Enter') {
+      e.preventDefault();
+  
+      if (userMessage) {
+        const data = {
+          senderId: senderId,
+          group_id: global_group_id,
+          message: userMessage
+        };
+  
+        // Save the chat on the server
+        axios.post('/group-chat-save', data)
+          .then(function(resp){
+
+            let chat = resp.data.chat;
+             console.log(chat);
+               // Format the timestamp for display
+      const timestamp = new Date(chat.createdAt);
+      const displayHours = timestamp.getHours() % 12 || 12;
+      const displayMinutes = (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes();
+      const ampm = timestamp.getHours() >= 12 ? 'pm' : 'am';
+  
+  
+            let html = `<div class="log-chat" id= '${resp.data._id}'>
+              <span class="message-text">${chat.message}</span>
+              <span class="message-time">${displayHours}:${displayMinutes} ${ampm}</span>
+              </div>`;
+            $('#group-chat-container').append(html);
+  
+            // Emit newChat event to notify the server and other clients -- msg bhejo
+           socket.emit('newGroupChat', resp.data.chat);
+     
+            scrollToBottomG();
+  
+            // kya yahan par socket emit krenge
+            // updateLastRead();
+          })
+          .catch(function(err){
+            console.log('Error while sending a new message: ' + err.message);
+          });
+  
+        // Clear the message input field
+        messageSendInp.value = '';
+
+      }
+    }
+  });
+
+// recieving group chat message start here
+socket.on('loadNewGroupChat', function(data){
+     console.log("Received a new group message:", data);
+
+     function hello(){
+        console.log('hello')
+      }
+      hello()
+      unreadMSgCount(data.group_id)
+
+    if(global_group_id === data.group_id){
+
+              // Format the timestamp for display
+      const timestamp = new Date(data.createdAt);
+      const displayHours = timestamp.getHours() % 12 || 12;
+      const displayMinutes = (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes();
+      const ampm = timestamp.getHours() >= 12 ? 'pm' : 'am';
+  
+  
+            let html = `<div class="inverse-chat"  id= '${data._id}'>
+              <span class="message-text">${data.message}</span>
+              <span class="message-time">${displayHours}:${displayMinutes} ${ampm}</span>
+              </div>`;
+            $('#group-chat-container').append(html);
+
+          scrollToBottomG()
+          updateLastRead(global_group_id) //ye kyu
+
+    }
+
+})
+// recievig group chat ends here
+
+
+// load old chat group function
+function loadGroupChats(){
+
+      $.ajax({
+        url : "/load-group-chats",
+        type : 'POST',
+        data : { group_id : global_group_id },
+        success : function(res){
+           if(res.success){
+              //  console.log(res.groupChats);
+           var chats = res.groupChats;
+           var html = ''
+                 
+            chats.forEach((elem)=>{
+              const sender = elem.sender_id
+                  //  console.log(elem);
+                   
+      const timestamp = new Date(elem.createdAt);
+      const displayHours = timestamp.getHours() % 12 || 12;
+      const displayMinutes = (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes();
+      const ampm = timestamp.getHours() >= 12 ? 'pm' : 'am';
+  
+                let addClass = 'inverse-chat';
+                let senderNameHtml = ''
+                
+                if(elem.sender_id._id === senderId){
+                  addClass = 'log-chat'
+                } else {
+                      senderNameHtml =  `
+              <div class="sender-details">
+                <div>
+                <div class="img-cont-head">
+                          <img src="/profile/${sender.profilePic}" alt="img">
+                       </div>
+                    </div>
+                <span class="sender-name">${sender.username}</span>
+              </div>`;
+                    }
+
+          html = `
+          <div class='${addClass}' id = "${elem._id}">
+             <span class="message-text">${elem.message}</span>
+             <span class="message-time">${displayHours}:${displayMinutes} ${ampm}</span>
+             
+
+        </div>`;
+  
+        $('#group-chat-container').append(html);
+
+        });
+// append of every message done with for each
+        scrollToBottomG();
+        updateLastRead(global_group_id)
+
+    }
+          //  else{ alert(res.msg) }
+      }
+  })
+}
+// load group chat fun ends here
+
+
+</script>
+
+</body>
+</html>

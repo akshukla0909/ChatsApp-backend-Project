@@ -1,0 +1,53 @@
+<!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Enable body scrolling</button> -->
+
+<div  style="margin: 15px 0px 15px 10px;"  class="offcanvas offcanvas-start" data-bs-scroll="true"  data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" >
+  <!-- <button type="button" class="btn-close"  aria-label="Close"></button> -->
+   
+  <div class="top-box">
+    <i data-bs-dismiss="offcanvas" data-icon="back" ><svg viewBox="0 0 24 24" height="22" width="22" preserveAspectRatio="xMidYMid meet" class="" version="1.1" x="0px" y="0px" enable-background="new 0 0 24 24"><path fill="currentColor" d="M12,4l1.4,1.4L7.8,11H20v2H7.8l5.6,5.6L12,20l-8-8L12,4z"></path></svg></i>
+        <span>Group info</span>
+   </div>
+   <div class="bottom-box">
+       <div class="section profile-image">
+        <form action="/uploadImg" id="img-form-s" method="post" enctype="multipart/form-data">
+            <input type="file" name="profilePic" id="img-form">
+        </form>
+        <div class="img-container">
+            <div class="camera">
+                <i class="ri-camera-fill"></i>
+                <!-- <span>change profile photo</span> -->
+            </div>
+            <% if (logInUser.profilePic !== '../images/def') { %>
+                <img src="/profile/<%= logInUser.profilePic %>" alt="user-image">
+            <% } else { %>
+                <img src="../images/def.png" alt="user-image">
+            <% } %>
+              
+        </div>
+       </div>
+       <div class="section">
+          <div class="your-name">
+            <span>Admin</span>
+            <span><%= logInUser.username %></span>
+          </div>
+       </div>
+       <div class="section">
+          <div class="your-name">
+            <span>Member</span>
+            <span><%= logInUser.username %></span>
+          </div>
+       </div>
+       <!-- <div class="section">
+        <div class="desc">
+        <span aria-label="">This is not your username or pin. This name will be visible to your WhatsApp contacts.</span>
+        </div>
+       </div> -->
+       <div class="section">
+        <div class="your-name">
+            <span>About</span>
+            <span>At work</span>
+          </div>
+       </div>
+   </div> 
+</div>
+

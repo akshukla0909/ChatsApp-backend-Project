@@ -1,0 +1,379 @@
+<%- include('partials/header') %>
+<style>
+    .main-page{
+    max-width: 'md';
+    width: 100%;
+    height: 100%;
+    background-color: #F1F2F4;
+    display: flex;
+    flex-direction: column;
+}
+
+    .group-card {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .group-card h3 {
+      margin-bottom: 0;
+    }
+
+    .group-card p{
+        margin-top: 2px; 
+       margin-bottom: 2px
+    }
+
+    .create-group-btn {
+      margin-top: 20px;
+    }
+
+    nav{
+        margin-left: 10px;
+    }
+    nav.navbarNav{
+        padding-left: 40px;
+    }
+.container-fluid{
+    width: 100%;
+    height: 100%;
+    padding-right: 0;
+    margin-right: 0;
+    overflow-y: scroll;
+
+}
+.bottom{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+a{
+    text-decoration: none;
+    color: #ccc;
+}
+.btn-primary{
+    background-color: #00A884;
+}
+
+.modal-backdrop {
+  z-index: 40;
+  opacity: 0.5; 
+}
+.btn, .btn-block:focus{
+    border: none;
+}
+h5{
+    font-size: 1.25rem;
+    font-weight: 400;
+}
+.modal-body input{
+  margin-bottom: 20px;
+  border: none;
+  border-bottom: 1px solid #00E676;
+  border-radius: 0;
+  padding: 10px;
+}
+.modal-body input:focus{
+  /* margin-top: -6px; */
+  outline: none;
+  box-shadow: none;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+    outline: none;
+    box-shadow: none;
+}
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 4px; 
+    height: 4px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    outline: none;
+}
+input[type="checkbox"]:checked {
+    background-color: #01816abd; 
+    border-color: #ccc; 
+    box-shadow: none; 
+}
+.g-name{
+    text-transform: capitalize;
+}
+
+</style>
+
+<div id="main">
+    <div class="landing-wrapper" style="background-color: #D8DADA; overflow: hidden;">
+        <div class="landing-wrapper-before" style="height: 110px;"></div>
+        <div class="landing-page">
+            <div class="main-page">
+                    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                            <div class="img-box" style="margin-right: 70%; margin-left: 10px;">
+                                <div class="img-cont-head">
+                                 <a href="/profile" id="prof-icon" class="navbar-brand">
+                                 <% if (logInUser.profilePic !== '../images/def') { %>
+                                     <img src="/profile/<%= logInUser.profilePic %>" alt="user-image">
+                                 <% } else { %>
+                                     <img src="../images/def.png" alt="user-image">
+                                        <% } %>
+                                           
+                                 </a>
+                                </div>
+                             </div>
+
+                          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                          </button>
+                          <div class="collapse navbar-collapse" id="navbarNav" >
+                            <ul class="navbar-nav">
+                              <li class="nav-item">
+                                <a class="nav-link" href="#">Chats</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="story">Status</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="/group-chat">Group</a>
+                              </li>
+                              <li>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#createGroup" class="nav-link" style="color: #018169; font-size: 16px;">
+                                   New group <sup style="font-size: 18px; font-weight: 600; color: #018169; margin-left: -8px;">+</sup>
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+
+                      </nav>    
+                <div class="container-fluid">
+                      <div class="bottom">
+                        <!-- Button trigger modal -->
+
+                        <h5 class="m-3" >All Groups created by you</h5>
+                    
+                          <!--  render all group-->
+                          <% if(groups.length > 0) { %>
+                            <% groups.forEach((group, index) => { %>
+                              <div style="width: 95%; margin-left: 10px;">
+                                <h4 class="d-inline-flex gap-1 g-name" >
+                                  <a class="btn btn-block" data-bs-toggle="collapse" href="#<%= group._id %>" role="button" aria-expanded="false" aria-controls="<%= group._id %>">
+                                    <%= index + 1 %>. <%= group.name %>
+                                    <i class="ri-arrow-down-s-line"></i>
+                                  </a>
+                                </h4>
+                                <hr>
+                          
+                                <div class="collapse" id="<%= group._id %>">
+                                  <div class="card card-body">
+                                    <p>Created By: <%= group.creator_id.username %></p>
+                                    <p>Max limit: <%= group.limit %></p>
+                                    <p>Action: <br>
+                                        <a data-bs-toggle="modal" data-id="<%= group._id %>" data-limit="<%= group.limit %>" data-bs-target="#member-modal" class="addMember" style="cursor: pointer; text-decoration: none;">
+                                            Edit members
+                                          </a> <br>
+                                      <a href="">Delete group</a><br>
+                                      <a href="#" class="copy" data-id="<%= group._id %>">share group</a>
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            <% }) %>
+                          <% } else { %>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#createGroup"><p >You have not created any group. Create a new one.</p></a>
+                          <% } %>
+                          
+                        <!-- Member modal -->
+                        <div class="modal fade" id="member-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel" style="color: #008069;">Select group members</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                      
+                                <form action="" id="add-member-form">
+                                 
+                                <div class="modal-body">
+                    
+                                  <input type="hidden" name="group_id" id="group_id">
+                                  <input type="hidden" name="limit" id="limit">
+                    
+                                  <table class="table">
+                                   <thead>
+                                    <tr>
+                                      <th>Select</th>
+                                      <th>Name</th>
+                                    </tr>
+                                   </thead>
+                                  <tbody class="addMemberTable">
+                                     <!--  -->
+                                  </tbody>
+                                  </table>
+                    
+                                </div>
+                                <div class="modal-footer">
+                                  <p id="add-member-error"></p>
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-primary">Update member</button>
+                                </div>
+                      
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+    
+                       
+                        <!-- Modal -->
+                        <div class="modal fade" id="createGroup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+  <h5 class="modal-title" id="exampleModalLabel" style="color: #008069;">Enter group details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                    
+                              <form action="/newGroup" method="post">
+                               
+                              <div class="modal-body">
+                                <input type="text" placeholder="enter group name"class="w-100" name="groupName"><br><br>
+                                <input type="Number" required min="1" placeholder="group length" class="w-100" mb-2 name="limit">
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                              </div>
+                    
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+
+
+
+                      </div>
+                </div>
+               </div>
+            </div>
+       </div>
+    </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="../javascripts/script.js"></script>
+
+
+<!-- <script src="../javascripts/prof-menu.js"></script> -->
+<!-- <script src="../javascripts/script.js"></script> -->
+
+</script>
+<script>
+
+    // add member JS
+    
+    $('.addMember').click(function(){
+        var id = $(this).attr('data-id')
+        var limit = $(this).attr('data-limit')
+       //  console.log(limit +' id mil gyi'); 
+ 
+        $('#group_id').val(id)
+        $('#limit').val(limit)
+ 
+        $.ajax({
+         url : '/get-members',
+         type : 'POST',
+         data : {group_id : id},
+         success : function(res){
+           console.log('getmb' ,res);
+           // console.log(res.data);
+           
+           if(res.status == true){
+                  let users = res.data;
+                  let html = '';
+ 
+                  users.forEach((elem) => {
+ 
+                   let isMemberOfGroup = elem['member'].length > 0 ? true : false 
+ 
+                   html +=   
+                          `<tr> 
+                           <td> <input type="checkbox" ${isMemberOfGroup ? 'checked' : ''} name="members[]" value ="${elem._id}"/> </td>
+                           <td> ${elem.username} </td>
+                          </tr>`
+                  });
+                  $('.addMemberTable').html(html)
+           }
+           else {
+             alert(res.msg)
+           }
+         }
+        })
+ 
+    })
+ 
+   //  add memebr ajax
+     $('#add-member-form').submit(function(e){
+       e.preventDefault();
+ 
+      var formData = $(this).serialize();
+     //  var formData = new FormData(this);
+      console.log(formData);
+       $.ajax({
+           url : '/add-members',
+           type : 'POST',
+           data : formData,
+           success : function(res){
+                  console.log( 'resd',res);
+                  
+              if(res.status){
+               $('#member-modal').modal('hide');
+               $('#add-member-form')[0].reset()
+                 alert(res.msg)
+                 
+              }
+              else{
+              $('#add-member-error').text(res.msg)
+ 
+              setTimeout(() => {
+               $('#add-member-error').text('')
+              }, 2000);
+              }
+           }
+       })
+     })
+ 
+     // copy sharable link
+     $('.copy').click(function(){
+ 
+       $(this).prepend('<span class="copied_text">Copied<span>')
+ 
+       var group_id =  $(this).attr('data-id');
+ 
+       var url = window.location.host + '/share-group/'+ group_id
+ 
+       var temp =   $('<input>');
+       $('body').append(temp)
+       temp.val(url).select();
+       document.execCommand('copy')
+ 
+       temp.remove()
+ 
+       setTimeout(() => {
+         $('.copied_text').remove()
+       }, 2000);
+     })
+ 
+ 
+   </script>
+   
+ </body>
+ </html>

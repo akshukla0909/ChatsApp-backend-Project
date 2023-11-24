@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Video Call App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        #chat-area::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+    background-image: url(../images/bg.jpg);
+    background-size: cover;
+}
+
+.main-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background-color: #333;
+}
+
+video {
+    background: black;
+    border: 1px solid gray;
+}
+
+.call-wrap {
+    position: relative;
+    display: block;
+    padding: 10px;
+}
+
+#local-video {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 9;
+}
+
+#remote-video {
+    width: 500px;
+    height: 500px;
+}
+
+.chat-wrap {
+    display: block;
+    width: 400px;
+    margin-left: 15px;
+    padding: 10px;
+    max-height: 500px;
+    overflow-y: scroll;
+}
+
+.call-hang-status {
+    position: absolute;
+    z-index: 999;
+    height: 97%;
+    width: 100%;
+}
+
+.calling-status-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    z-index: 9;
+}
+
+.user-image img {
+    height: 150px;
+    width: 150px;
+}
+
+.user-name {
+    padding: 5px 0;
+    font-size: 18px;
+}
+
+.user-calling-status {
+    padding: 15px 0;
+    font-size: 18px;
+}
+
+.calling-action {
+    padding: 50px 0 0 0;
+    display: flex;
+}
+
+.audio-icon {
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.close-icon {
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.call-status-wrap {
+    height: 500px;
+    width: 500px;
+}
+
+.calling-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    z-index: 9;
+}
+
+.calling-hang-action {
+    padding: 420px 0 0 0;
+    display: flex;
+}
+
+.video-toggle {
+    border-radius: 50%;
+    padding: 8px;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+.audio-toggle {
+    border-radius: 50%;
+    padding: 8px;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+.call-cancel-icon {
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+}
+
+    </style>
+</head>
+
+<body>
+
+
+    <div class="main-wrap">
+        <div class="call-wrap card" style="z-index: 99">
+            <video id="local-video" autoplay></video>
+            <div class="row remote-video-wrap" style="position: relative;">
+                <div class="call-hang-status" style="position: absolute; z-index:999">
+
+                </div>
+                <video id="remote-video" autoplay></video>
+            </div>
+            <!--other username -->
+            <div class="row">
+                <div class="col m12">
+                    <input type="text" value="<%= callUser.username %>" name="<%= callUser.username %>" id="username-input" placeholder="Username" hidden>
+                    <button id="call-btn" class="btn waves-effect"> Call</button>
+                   <a class="btn" style="float: right;" href="/profile">Home</a>
+
+                    <!-- <img src="/profile/<%= logInUser.profilePic %>" alt="" width="20px"> -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- <script src="/js/materialize.min.js"></script> -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../javascripts/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ws/8.5.0/ws.min.js"></script>
+
+    <script>
+
+        var name ;
+        var connectedUser;
+        var myConn;
+        var username =  `<%= logInUser.username %>`
+        var userImg = `/profile/<%= logInUser.profilePic %>`
+        var localVideo = document.querySelector('#local-video')
+        var remoteVideo = document.querySelector('#remote-video')
+        var call_to_username = `<%= callUser.username %>`;
+        // = document.querySelector('#username-input')
+        var call_btn = document.querySelector('#call-btn')
+        var call_status = document.querySelector('.call-hang-status')
+
+      
+
+        var connection = new WebSocket('ws://localhost:8000')
+
+        connection.onopen = function(){
+            console.log('connected to ws server');
+        }
+
+        connection.onmessage = function(msg){
+            var data = JSON.parse(msg.data)
+
+            switch(data.type){
+            case 'online' : 
+                   onlineProcess(data.success);
+                //    console.log(data);
+                break;
+
+            case 'not_available' :
+                    call_status.innerHTML = ''
+                    alert(data.name + ' is not online')
+                    call_btn.removeAttribute('disabled')
+                break;    
+
+            case 'offer' :
+                
+                call_btn.setAttribute('disabled','disabled')
+                call_status.innerHTML = `<div class="calling-status-wrap card black white-text"> <div class="user-image"> <img src="/profile/<%= callUser.profilePic %>" class="caller-image circle" alt=""> </div> <div class="user-name"><%= callUser.username %></div> <div class="user-calling-status">Incoming Call...</div> <div class="calling-action"> <div class="call-accept"><i class="material-icons green darken-2 white-text audio-icon">call</i></div> <div class="call-reject"><i class="material-icons red darken-3 white-text close-icon">close</i></div> </div> </div>`
+     
+            var call_accept = document.querySelector('.call-accept')
+            var call_reject = document.querySelector('.call-reject')
+
+            call_accept.addEventListener('click', function(){
+                offerProcess(data.offer, data.name);
+                // add call cut
+                call_status.innerHTML = `
+                 
+
+                <div class="call-status-wrap white-text ">
+    <div class="calling-wrap">
+        <div class="calling-hang-action">
+            
+            <div class="videocam-on">
+                  <i class="material-icons teal darken-2 white-text video-toggle">videocam</i>
+            </div>
+            <div class="audio-on">  
+                   <i class="material-icons teal darken-2 white-text audio-toggle ">mic</i>
+            </div>
+            <div class="call-cancel">
+                <i class="call-cancel-icon material-icons red darken-3 white-text" >call</i>
+            </div>
+            
+        </div>
+    </div>
+</div>                    
+                `;
+
+                acceptCall(data.ame)
+
+
+             video_toggle =   document.querySelector('.videocam-on')
+             audio_toggle =   document.querySelector('.audio-on')
+
+             video_toggle.onclick = function(){
+
+                stream.getVideoTracks()[0].enabled = !(stream.getVideoTracks()[0].enabled);
+
+              video_toggle_class =  document.querySelector('.video-toggle')
+             if(video_toggle_class.innerText == 'videocam'){
+                video_toggle_class.innerText = 'videocam_off';
+             }
+              else{
+                video_toggle_class.innerText = 'videocam'
+              }
+             }
+
+             audio_toggle.onclick = function(){
+
+                stream.getAudioTracks()[0].enabled = !(stream.getAudioTracks()[0].enabled);
+
+              audio_toggle_class =  document.querySelector('.audio-toggle')
+             if(audio_toggle_class.innerText == 'mic'){
+                audio_toggle_class.innerText = 'mic_off';
+             }
+              else{
+                audio_toggle_class.innerText = 'mic'
+              }
+             }
+
+
+            })
+
+            call_reject.addEventListener('click', function(){
+
+                call_status.innerHTML = ''
+                alert('call rejected')
+                call_btn.removeAttribute('disabled');
+
+                rejectedCall(data.name);
+            })
+
+                break;    
+
+            case 'answer' :
+                    answerProcess(data.answer);
+                break;    
+
+            case 'candidate' :
+                    candidateProcess(data.candidate);
+                break;    
+
+            case 'reject' :
+                    rejectProcess();
+                break;    
+
+            case 'accept' :
+                    acceptProcess();
+                break; 
+
+            case 'leave' :
+                    leaveProcess();
+                break;  
+
+            default : 
+                break;
+            }
+        }
+
+        connection.onerror = function(err){
+           console.log(err);
+        }
+
+
+        navigator.getUserMedia = navigator.getUserMedia ||  navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+// send function
+        function send(message){
+            // console.log(message);
+           if(connectedUser){
+            // console.log(connectedUser);
+            console.log('user cont');
+            message.name = connectedUser;
+           }
+           connection.send(JSON.stringify(message))
+        }
+
+
+        // calling that person name
+        call_btn.addEventListener('click', function(){
+            //  call_to_username = call_to_username.value
+            console.log('call to' + call_to_username);
+
+            if(call_to_username){
+
+               connectedUser = call_to_username;
+               console.log(myConn);
+
+               //so that call krne ke baad call btn dobara hit na ho
+               call_status.innerHTML = `<div class="calling-status-wrap card black white-text"> <div class="user-image"> <img src="/profile/<%= callUser.profilePic %>" class="caller-image circle" alt=""> </div> <div class="user-name"><%= callUser.username %></div> <div class="user-calling-status">Calling to <%=  callUser.username %></div> <div class="calling-action"> 
+                    <div class="call-reject"><i class="material-icons red darken-3 white-text close-icon">close</i></div> </div> </div>`
+
+                 var call_reject = document.querySelector('.call-reject')
+
+            call_reject.addEventListener('click', function(){
+
+                    call_status.innerHTML = ''
+                    alert('call rejected')
+                    call_btn.removeAttribute('disabled')   
+
+                    rejectedCall(connectedUser)
+                })
+
+            call_btn.setAttribute('disabled', 'disabled')   
+
+             myConn.createOffer(function(offer){
+                 send({
+                    type : 'offer',
+                    offer : offer,
+                    image : userImg
+                });
+                myConn.setLocalDescription(offer)
+             }, function(err){
+                alert('offer not created')
+             })
+            } else{
+                alert('enter correct username or usr doesnt exist')
+            }
+        })
+
+
+        // logInUser.username 
+
+       setTimeout(() => {
+        if(connection.readyState === 1){
+            if(username !== null){
+                    name = username
+
+                    console.log( 'loginuser' + name);
+                    send({
+                        type : "online",
+                        name : name
+                    })
+            }
+        }
+        else{
+            console.log('went wrong something');
+        }
+       }, 1000);
+
+  // offer 
+// online process myconn init, loginuser ki streaming
+// ice set up
+        function onlineProcess(success){
+            if(success){
+
+                navigator.getUserMedia(
+          {
+           audio : true,
+           video : true, 
+          }, function(myStream){
+              stream = myStream;
+              localVideo.srcObject = stream;
+
+              var configuration = {
+                'iceServer'  : [
+                    {'url' : "stun : stun2.l.google.com:19302"}
+                ]
+              }
+
+            //   ye streaming ko track krega
+               myConn = new webkitRTCPeerConnection(configuration, {
+                optional : [{
+                    RtpDataChannels : true,
+
+                }]
+              })
+
+//      stream provide kr do locally jo chl rhi
+              myConn.addStream(myStream);
+              myConn.onaddstream = function(e){
+                remoteVideo.srcObject = e.stream
+
+                // add call cut
+              call_status.innerHTML =`
+              <div class="call-status-wrap white-text ">
+    <div class="calling-wrap">
+        <div class="calling-hang-action">
+            
+            <div class="videocam-on">
+                  <i class="material-icons teal darken-2 white-text video-toggle">videocam</i>
+            </div>
+            <div class="audio-on">  
+                   <i class="material-icons teal darken-2 white-text audio-toggle ">mic</i>
+            </div>
+            <div class="call-cancel">
+                <i class="call-cancel-icon material-icons red darken-3 white-text" >call</i>
+            </div>
+            
+        </div>
+    </div>
+</div>` 
+ 
+             video_toggle =   document.querySelector('.videocam-on')
+             audio_toggle =   document.querySelector('.audio-on')
+
+             video_toggle.onclick = function(){
+
+                stream.getVideoTracks()[0].enabled = !(stream.getVideoTracks()[0].enabled);
+
+              video_toggle_class =  document.querySelector('.video-toggle')
+             if(video_toggle_class.innerText == 'videocam'){
+                video_toggle_class.innerText = 'videocam_off';
+             }
+              else{
+                video_toggle_class.innerText = 'videocam'
+              }
+             }
+
+             audio_toggle.onclick = function(){
+
+                stream.getAudioTracks()[0].enabled = !(stream.getAudioTracks()[0].enabled);
+
+              audio_toggle_class =  document.querySelector('.audio-toggle')
+             if(audio_toggle_class.innerText == 'mic'){
+                audio_toggle_class.innerText = 'mic_off';
+             }
+              else{
+                audio_toggle_class.innerText = 'mic'
+              }
+             }
+
+
+             hangUp()
+
+        }
+
+              myConn.onicecandidate = function(event){
+                if(event.candidate){
+                    send({
+                        type : 'candidate',
+                        candidate : event.candidate
+                    })
+                }
+              }
+
+          },
+          
+          function(error){
+             alert('u cant access media without video allow')
+          }
+        );
+            }else{
+                alert('something wrong at online process')
+            }
+        }
+      
+
+function offerProcess(offer, name) {
+    connectedUser = name;
+
+    console.log(connectedUser);
+    myConn.setRemoteDescription(new RTCSessionDescription(offer))
+
+    // crete answer to an offer
+
+    myConn.createAnswer(function(answer){
+      myConn.setLocalDescription(answer)
+
+      send({
+        type : 'answer',
+        answer : answer
+      })  
+    }, function(error){
+        alert('answer has not created')
+    })
+       
+}
+
+function answerProcess(answer) {
+    myConn.setRemoteDescription(new RTCSessionDescription(answer))
+     
+
+}
+
+     
+function candidateProcess(candidate) {
+
+            myConn.addIceCandidate(new RTCIceCandidate(candidate))
+
+}
+
+
+
+        function rejectedCall(rejected_user){
+             send({
+                type : 'reject',
+                name : rejected_user
+             })
+        }
+
+        function rejectProcess(){
+           call_status.innerHTML = ''
+           call_btn.removeAttribute('disabled')
+        }
+
+
+        function acceptCall(call_name){
+            send({
+                type : 'accept',
+                name : call_name
+            })
+
+        }
+
+ 
+        function acceptProcess(){
+
+            console.log('accept call process');
+            call_status.innerHTML = '';
+        }
+ 
+
+        function hangUp(){
+            var call_cancel = document.querySelector('.call-cancel')
+            call_cancel.addEventListener('click', function(){
+               
+                send({
+                    type : 'leave',
+                });
+               leaveProcess();
+            })
+           
+        }
+
+        function leaveProcess(){
+             call_btn.removeAttribute('disabled')
+             call_status.innerHTML = ''
+
+             remoteVideo.src = null;
+             myConn.close();
+             myConn.onicecandidate = null
+             myConn.onaddstream = null;
+
+             connectedUser = null;
+             alert('call ended')
+             window.location.reload()
+        }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<div class="wrapper-box">
+    <% users.forEach((userShow) => { %>
+        <div class="each-user-box" onclick="displayUser(event)" data-user-details = '<%= JSON.stringify(userShow) %>' data-id = '<%=userShow._id %>' >
+          <div class="img-box-left">
+            <div class="on-off-status">
+              <span>
+                <% if(userShow.is_online === '1') {  %>
+                  <div class="online-status" id="<%=userShow._id%>-status">
+                    <i class="ri-circle-fill"></i>
+                  </div>
+               <% } else{ %>
+          <div class="offline-status" id="<%=userShow._id%>-status">
+            <i class="ri-circle-fill"></i>
+          </div>
+                   <% } %>
+              </span>
+            </div>
+            <div class="img-cont-chat">
+              <% if (userShow.profilePic !== '../images/def') { %>
+                <img src="/profile/<%= userShow.profilePic %>" alt="user-image">
+            <% } else { %>
+                <img src="../images/def.png" alt="user-image">
+                   <% } %>       
+            </div>
+          </div>
+          <div class="img-box-name">
+            <div class="name-user">              
+              <div >
+              <span style="font-size: .9025rem;"><%= userShow.username %></span>
+              </div>  
+              <div class="last-msg-name" id="" style="opacity: 1;">
+                <span> nice dp!</span>
+                </div>
+              <!-- <div class="offline-status" id="<%= userShow._id%>-status">offline</div> -->
+            </div>
+          </div>
+        </div>
+    <% }); %>
+  </div>
+
+
+  
