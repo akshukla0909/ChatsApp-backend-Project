@@ -9,12 +9,6 @@ chat ke tile pr dikhna chahiye. Jesa image dikh rha hai ki apne
 frineds Group me apne 4 messages nhi dekhe hain , aur last message kya hai
 
 --------------------------------------------------------------
-
-
-Certainly! Here's a suggested GitHub description for your WhatsApp clone project:
-
----
-
 ### WhatsApp Clone
 
 This project is a clone of the popular messaging application WhatsApp. It aims to replicate the core functionalities of WhatsApp, offering a similar user interface and features.
