@@ -25,7 +25,7 @@ const fs = require('fs');
 const { Readable } = require('stream')
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/whatsapp-clone')
+mongoose.connect('mongodb+srv://akashshukla0887:8yTSWoz1Uy208vzl@cluster0.9ruacd0.mongodb.net/?retryWrites=true&w=majority')
 .then(()=>{
     console.log("connected to db");
 })
